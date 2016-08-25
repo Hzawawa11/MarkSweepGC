@@ -15,7 +15,7 @@ Object* R[RN];
 
 int main(void){
   init_free();
-  state_list();
+  // state_list();
   /*Int Data*/
   
   Object* int_50 = atom(50);
@@ -23,6 +23,21 @@ int main(void){
   init_local();
   push_local(int_20);
   push_local(int_50);
+  R[0] = ListMake(3);
+  ListDisp(R[0]);
+  R[0] = ListMake(5);
+  ListDisp(R[0]);
+  R[0] = ListDelete(2, R[0]);
+  ListDisp(R[0]);
+  R[0] = ListMake(3);
+  ListDisp(R[0]);
+  // R[0] = ListDelete(, R[0]);
+  // ListDisp(R[0]);
+
+  R[1] = cons(NULL, NULL);
+  R[0] = ListInsert(1, R[0], R[1]);
+  ListDisp(R[0]);
+
   /*
   int i = 1;
   for( ; i < 20; i++)
@@ -30,6 +45,7 @@ int main(void){
 */
   
   /*Pair*/
+  /*
   R[0] = cons(int_20, int_50);
   R[1] = cons(int_20, int_50);
   int i;
@@ -43,9 +59,9 @@ int main(void){
   // R[0] = cons(50, 20);  
   state_list();
   state_Obj(R[1]);
+  */
   pop_local();
   pop_local();
   free(freelistINT);
   free(freelistPAIR);
-
 }

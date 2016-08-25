@@ -104,8 +104,8 @@ void init_free(void){
   int i;
   for(i = 1; i <= FREESIZE; i++){
     Object* NextINT = (Object*)malloc(DINTSIZE());
-    if(i == 1) HbtmINT = NextINT;
-    if(i == FREESIZE) HtopINT = NextINT;
+    // if(i == 1) HbtmINT = NextINT;
+    // if(i == FREESIZE) HtopINT = NextINT;
     HINT[i-1] = NextINT;
     _TYPE(NextINT) = T_INT;
     _MARK(NextINT) = 'f';
@@ -115,8 +115,8 @@ void init_free(void){
 
   for(i = 1; i <= FREESIZE; i++){
     Object* NextPAIR = (Object*)malloc(PAIRSIZE());
-    if(i == 1) HbtmPAIR = NextPAIR;
-    if(i == FREESIZE) HtopPAIR = NextPAIR;
+    // if(i == 1) HbtmPAIR = NextPAIR;
+    // if(i == FREESIZE) HtopPAIR = NextPAIR;
     HPAIR[i-1] = NextPAIR;
     _TYPE(NextPAIR) = T_PTR;
     _MARK(NextPAIR) = 'f';

@@ -33,11 +33,10 @@ typedef struct mark_O{
   };
 } Object;
 
-#define RN 20
-#define STACKSIZE 20
-#define FREESIZE 10
-#define ADDSIZE 10
-#define HEAPSIZE 10
+#define RN 10
+#define STACKSIZE 100
+#define FREESIZE 30
+#define HEAPSIZE 30
 
 extern Object* gcs[STACKSIZE];
 extern int stackpoint;

@@ -6,14 +6,13 @@
 
 #define car(o) (o->Pair.car)
 #define cdr(o) (o->Pair.cdr)
-#define rplaca(o, data) (car(o) = _DINT(data))
-#define rplacd(o, data) (cdr(o) = _DINT(data))
+#define rplaca(o, data) (car(o) = data)
+#define rplacd(o, data) (cdr(o) = data)
 
 
 /* basic.c */
 Object* cons(Object* car, Object* cdr);
 Object* atom(int i);
-
 
 /*gc.c*/
 void gc(void);

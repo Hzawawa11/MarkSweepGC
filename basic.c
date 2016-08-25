@@ -14,7 +14,7 @@ Object* freelistPAIR;
 
 Object* cons(Object* car, Object* cdr){
   
-  CHECK(car); CHECK(cdr);
+  // CHECK(car); CHECK(cdr);
 
   if (EMPTY_LIST(freelistPAIR)){
     gc();
