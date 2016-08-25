@@ -3,38 +3,50 @@
 #include "structure.h"
 #include "basic.h"
 
-Object* freelist;
+Object* freelistINT;
+Object* freelistPAIR;
 
-#define EMPTY_LIST() (freelist == NULL)
-
-Object* allocate(void){
-  printf("allocate: %p\n", freelist);
-  Object* cell = freelist;
-  freelist = cdr(cell);
-  return cell;
-}
+#define EMPTY_LIST(list) (list == NULL)
+#define CHECK(o) \
+  if(_TYPE(o) != T_INT && _TYPE(o) != T_PTR){\
+    puts("Error: 1");exit(0);\
+  }
 
 Object* cons(Object* car, Object* cdr){
-  if (EMPTY_LIST()){
-    puts("\ngc start!");
+  
+  CHECK(car); CHECK(cdr);
+
+  if (EMPTY_LIST(freelistPAIR)){
     gc();
-    if(EMPTY_LIST()){
-      puts("Error!");
-      return NULL;
+    if(EMPTY_LIST(freelistPAIR)){
+      printf("Error: 2\n");
+      exit(0);
     }
   }
-  Object* obj = allocate();
+  // Object* obj = allocate();
+  printf("allocate T_PAIR: %p\n", freelistPAIR);  
+  Object* obj = freelistPAIR;
+  freelistPAIR = cdr(obj);
   car(obj) = car;
   cdr(obj) = cdr;
-  _PAIR(obj, tt) = T_PTR;
-  _PAIR(obj, mark) = 0;
+  _TYPE(obj) = T_PTR;
+  _MARK(obj) = FALSE;
   return obj;
 }
 
 Object* atom(int i){
-  Object* obj = allocate();  
+  if (EMPTY_LIST(freelistINT)){
+    gc();
+    if(EMPTY_LIST(freelistINT)){
+      exit(0);
+    }
+  }  
+  // Object* obj = allocate();
+  printf("allocate T_INT: %p\n", freelistINT);  
+  Object* obj = freelistINT;
+  freelistINT = _DLINK(obj);
   _DINT(obj) = i;
-  _PAIR(obj, tt) = T_INT;
-  _PAIR(obj, mark) = 0;
+  _TYPE(obj) = T_INT;
+  _MARK(obj) = FALSE;
   return obj;
 }

@@ -5,8 +5,9 @@
 #define T_PTR 2  
 
 #define _TYPE(o) o->Dummy.tt
-#define _DINT(o) o->Dint.i
-#define _PAIR(o,d) o->Pair.d
+#define _MARK(o) o->Dummy.mark
+#define _DINT(o) o->Dint.data.i
+#define _DLINK(o) o->Dint.data.link
  
 /* Data Structure */
 typedef struct mark_O{
@@ -24,10 +25,10 @@ typedef struct mark_O{
     struct{
       char tt;
       char mark;
-      // union {
-      int i;
-        // struct mark_O* link;
-      // }data;
+      union {
+        struct mark_O* link;
+        int i;
+      }data;
     }Dint;
   };
 } Object;
@@ -36,14 +37,22 @@ typedef struct mark_O{
 #define STACKSIZE 20
 #define FREESIZE 10
 #define ADDSIZE 10
-#define HEAPSIZE 100
+#define HEAPSIZE 10
 
 extern Object* gcs[STACKSIZE];
 extern int stackpoint;
+extern Object* local[STACKSIZE];
+extern int local_sp;
+
 extern Object* R[RN];
 extern Object* Heap;
-extern Object* Htop;
-extern Object* Hbtm;
-extern Object* freelist;
+extern Object* HtopINT;
+extern Object* HbtmINT;
+extern Object* HtopPAIR;
+extern Object* HbtmPAIR;
+extern Object* HPAIR[FREESIZE];
+extern Object* HINT[FREESIZE];
+extern Object* freelistINT;
+extern Object* freelistPAIR;
 
 #endif
