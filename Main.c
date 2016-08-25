@@ -1,17 +1,17 @@
 /* 
 * Programer: Hanzawa JUNCHI
-* Date: 2016, Augast 22
+* Date: 2016, Augast 22 --
 * Abstruct: MarkSweepGC (Stop the world)
 */
 #include <stdio.h>
 #include <stdlib.h>
 #include "structure.h"
 #include "basic.h"
+#include "list.h"
 
 Object* R[RN];
 
 /* prototype function */
-Object* list(Object* pre, Object* i);
 
 int main(void){
   init_free();

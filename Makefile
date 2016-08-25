@@ -1,4 +1,4 @@
-SRCS=	Main.c state.c basic.c gc.c
+SRCS=	$(wildcard *.c)
 OBJS=	$(SRCS:.c=.o)
 TARGET=	minGC
 CC= gcc
