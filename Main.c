@@ -11,57 +11,35 @@
 
 Object* R[RN];
 
-/* prototype function */
-
 int main(void){
   init_free();
-  // state_list();
+  state_list();
   /*Int Data*/
-  
-  Object* int_50 = atom(50);
-  Object* int_20 = atom(20);
+  printf("freelist : %d\n", FREESIZE);
+  // Object* int_50 = atom(50);
+  // Object* int_20 = atom(20);
   init_local();
-  push_local(int_20);
-  push_local(int_50);
+  // push_local(int_20);
+  // push_local(int_50);
+  
   R[0] = ListMake(3);
   ListDisp(R[0]);
-  R[0] = ListMake(5);
-  ListDisp(R[0]);
-  R[0] = ListDelete(2, R[0]);
-  ListDisp(R[0]);
+  R[1] = ListMake(5);
+  ListDisp(R[1]);
+ 
+  R[1] = ListDelete(2, R[1]);
+  ListDisp(R[1]);
   R[0] = ListMake(3);
+ 
   ListDisp(R[0]);
-  // R[0] = ListDelete(, R[0]);
+  ListDisp(R[1]);
+
+  // R[1] = cons(NULL, NULL);
+  // R[0] = ListInsert(1, R[0], R[1]);
   // ListDisp(R[0]);
 
-  R[1] = cons(NULL, NULL);
-  R[0] = ListInsert(1, R[0], R[1]);
-  ListDisp(R[0]);
-
-  /*
-  int i = 1;
-  for( ; i < 20; i++)
-    int_50 = atom(20);
-*/
-  
-  /*Pair*/
-  /*
-  R[0] = cons(int_20, int_50);
-  R[1] = cons(int_20, int_50);
-  int i;
-  for(i = 1; i <= 8; i++){
-    R[0] = cons(R[0], int_20);
-  }
-  // RootScan();
-  // mark();
-  R[0] = int_20;
-  R[0] = cons(int_50, int_20);  
-  // R[0] = cons(50, 20);  
-  state_list();
-  state_Obj(R[1]);
-  */
-  pop_local();
-  pop_local();
+  // pop_local();
+  // pop_local();
   free(freelistINT);
   free(freelistPAIR);
 }

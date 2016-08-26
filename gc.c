@@ -21,7 +21,7 @@ int local_sp;
 Object* R[RN];
 
 
-#define isCons(o) (_TYPE(o) == T_PTR)
+#define isPair(o) (_TYPE(o) == T_PTR)
 #define isMarked(o) (o->Dummy.mark == TRUE)
 #define GCS_EMPTY() (stackpoint == 0)
 
@@ -30,11 +30,8 @@ Object* R[RN];
 
 void gc(void){
   init_gcs();
-  printf("RootScan\n");
   RootScan();
-  printf("Mark\n");
   mark();
-  printf("Sweep\n");
   sweep();
 }
 
@@ -42,9 +39,11 @@ void mark(void){
   Object* p;
   while( !GCS_EMPTY() ){ // not isEmpty(worklist)
     p = pop_gcs(); //remove(worklist)
-    if( isCons(p)){
-      if ( !isMarked(car(p))) push_gcs(car(p));
-      if ( !isMarked(cdr(p))) push_gcs(cdr(p)); 
+    if(isPair(p)){
+      if ( cdr(p) != NULL && !isMarked(cdr(p))){
+          push_gcs(cdr(p));
+      }
+      if ( car(p) != NULL && !isMarked(car(p))) push_gcs(car(p));
     }
   }
 }
@@ -69,6 +68,7 @@ void sweep(void){
     // p = (HbtmPAIR+i);
     p = HPAIR[i];
     if (_MARK(p) == TRUE){
+      // printf("%p\n", p);
       _MARK(p) = FALSE;
     }else if( _MARK(p) != 'f' ){
       printf("free: %p\n", p);  
@@ -83,13 +83,12 @@ void sweep(void){
 void RootScan(void){
   int i;
   for(i = 0; i < RN; i++){
-    if (R[i] != NULL){
+    if (R[i] != NULL)
       push_gcs(R[i]); // push and mark
-      state_Obj(R[i]);
-    }
   }
   for(i = 0; i < STACKSIZE; i++){
-    if (local[i] != NULL) push_gcs(local[i]); // push and mark
+    if (local[i] != NULL) 
+      push_gcs(local[i]); // push and mark
   }
 }
 
@@ -159,6 +158,8 @@ void init_local(void){
 }
 
 int push_local(Object* obj){
+  if(obj == NULL)
+    return FALSE;
   if (local_sp < STACKSIZE){
     _MARK(obj) = TRUE;
     local[local_sp] = obj;
@@ -172,6 +173,7 @@ int push_local(Object* obj){
 Object* pop_local(void){
   if (local_sp > 0) {
     local_sp--;
+    _MARK(local[local_sp]) = FALSE;
     return local[local_sp];
   } else {
     return FALSE;

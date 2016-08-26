@@ -17,6 +17,7 @@ Object* cons(Object* car, Object* cdr){
   // CHECK(car); CHECK(cdr);
 
   if (EMPTY_LIST(freelistPAIR)){
+    puts("\nStart GC");
     gc();
     if(EMPTY_LIST(freelistPAIR)){
       printf("Error: 2\n");
@@ -36,7 +37,7 @@ Object* cons(Object* car, Object* cdr){
 
 Object* atom(int i){
   if (EMPTY_LIST(freelistINT)){
-    gc();
+    puts("\n Start GC");
     if(EMPTY_LIST(freelistINT)){
       exit(0);
     }
