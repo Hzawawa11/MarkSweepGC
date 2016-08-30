@@ -3,30 +3,55 @@
 #include "structure.h"
 #include "basic.h"
 
+Object* R[RN];
+
 Object* HtopINT;
 Object* HbtmINT;
 Object* HtopPAIR;
 Object* HbtmPAIR;
-Object* HPAIR[FREESIZE];
-Object* HINT[FREESIZE];
-
 Object* freelistINT;
 Object* freelistPAIR;
 
-Object* Heap;
 Object* gcs[STACKSIZE];
 int stackpoint;
 Object* local[STACKSIZE];
 int local_sp;
-Object* R[RN];
 
 
 #define isPair(o) (_TYPE(o) == T_PTR)
 #define isMarked(o) (o->Dummy.mark == TRUE)
 #define GCS_EMPTY() (stackpoint == 0)
 
-#define DINTSIZE() (sizeof(Object)+sizeof(char)+sizeof(char))
-#define PAIRSIZE() (sizeof(Object)+sizeof(Object)+sizeof(char)+sizeof(char))
+
+
+void init_free(void){
+  Object* freetmp;
+
+  freelistPAIR = (Object*)malloc(HEAPSIZE/2);
+  freelistINT = (Object*)malloc(HEAPSIZE/2);
+
+  HbtmPAIR = freelistPAIR;
+  HbtmINT = freelistINT;
+
+  for(int i = 0; i < ((HEAPSIZE/2)/PAIRSIZE); i++){
+    freetmp = (u_int64_t)HbtmPAIR + (PAIRSIZE*i);
+    _TYPE(freetmp) = T_PTR;
+    _MARK(freetmp) = 'f';
+    car(freetmp) = NULL;
+    cdr(freetmp) = freelistPAIR;
+    freelistPAIR = freetmp;
+  }
+  HtopPAIR = freelistPAIR;
+
+  for(int i = 0; i < ((HEAPSIZE/2)/DINTSIZE); i++){
+    freetmp = (u_int64_t)HbtmINT + (DINTSIZE*i);
+    _TYPE(freetmp) = T_INT;
+    _MARK(freetmp) = 'f';
+    _DLINK(freetmp) = freelistINT;
+    freelistINT = freetmp;
+  }
+  HtopINT = freelistINT;
+}
 
 void gc(void){
   init_gcs();
@@ -40,42 +65,38 @@ void mark(void){
   while( !GCS_EMPTY() ){ // not isEmpty(worklist)
     p = pop_gcs(); //remove(worklist)
     if(isPair(p)){
-      if ( cdr(p) != NULL && !isMarked(cdr(p))){
-          push_gcs(cdr(p));
-      }
-      if ( car(p) != NULL && !isMarked(car(p))) push_gcs(car(p));
+      if ( cdr(p) != NULL && !isMarked(cdr(p)))
+        push_gcs(cdr(p));
+      if ( car(p) != NULL && !isMarked(car(p))) 
+        push_gcs(car(p));
     }
   }
 }
 
 void sweep(void){
-  Object* p;
-  int i;
-  for(i = 0; i < FREESIZE; i++){
-    // p = (HbtmINT+i);
-    p = HINT[i];
+  Object* p = HbtmINT;
+  int i = 0;
+
+  for(i = 0; p < HtopINT; i++){
+    p = (u_int64_t)HbtmINT+(sizeof(char)*DINTSIZE*i);
     if (_MARK(p) == TRUE){
       _MARK(p) = FALSE;
     }else if (_MARK(p) != 'f'){
       _DLINK(p) = freelistINT;
       freelistINT = p;
       _MARK(freelistINT) = 'f';
-      // printf("free: %p\n", freelistINT);
     }
   }
 
-  for(i = 0; i < FREESIZE; i++){
-    // p = (HbtmPAIR+i);
-    p = HPAIR[i];
+  p = HbtmPAIR;
+  for(i = 0; p < HtopPAIR; i++){
+    p = (u_int64_t)HbtmPAIR+(sizeof(char)*PAIRSIZE*i);
     if (_MARK(p) == TRUE){
-      // printf("%p\n", p);
       _MARK(p) = FALSE;
     }else if( _MARK(p) != 'f' ){
-      printf("free: %p\n", p);  
       cdr(p) = freelistPAIR;
       freelistPAIR = p;
       _MARK(freelistPAIR) = 'f';
-      // printf("free: %p\n", freelistPAIR);
     }
   }
 }
@@ -92,39 +113,6 @@ void RootScan(void){
   }
 }
 
-
-
-void init_free(void){
-  /* Initialze NULL character */
-  freelistINT = NULL;
-  freelistPAIR = NULL;
-
-  /* Create freelistINT and freelistPAIR */
-  int i;
-  for(i = 1; i <= FREESIZE; i++){
-    Object* NextINT = (Object*)malloc(DINTSIZE());
-    // if(i == 1) HbtmINT = NextINT;
-    // if(i == FREESIZE) HtopINT = NextINT;
-    HINT[i-1] = NextINT;
-    _TYPE(NextINT) = T_INT;
-    _MARK(NextINT) = 'f';
-    _DLINK(NextINT) = freelistINT;
-    freelistINT = NextINT;
-  }
-
-  for(i = 1; i <= FREESIZE; i++){
-    Object* NextPAIR = (Object*)malloc(PAIRSIZE());
-    // if(i == 1) HbtmPAIR = NextPAIR;
-    // if(i == FREESIZE) HtopPAIR = NextPAIR;
-    HPAIR[i-1] = NextPAIR;
-    _TYPE(NextPAIR) = T_PTR;
-    _MARK(NextPAIR) = 'f';
-    car(NextPAIR) = NULL;
-    cdr(NextPAIR) = freelistPAIR;
-    freelistPAIR = NextPAIR;
-  }
-}
-
 void init_gcs(void){
   int i;
   for(i = 0; i < STACKSIZE; i++)
@@ -137,8 +125,9 @@ int push_gcs(Object* obj){
     gcs[stackpoint] = obj;
     stackpoint++;
     return TRUE;
-  } else { /* Error */
-    return FALSE;
+  } else { // Error process
+    puts("Error: gcs stack overflow");
+    exit(1);
   }
 }
 
@@ -165,8 +154,9 @@ int push_local(Object* obj){
     local[local_sp] = obj;
     local_sp++;
     return TRUE;
-  } else { /* Error */
-    return FALSE;
+  } else { // Error 
+    puts("Error: local stack overflow");
+    exit(1);
   }
 }
 

@@ -33,10 +33,17 @@ typedef struct mark_O{
   };
 } Object;
 
-#define RN 10
-#define STACKSIZE 100
-#define FREESIZE 10
-#define HEAPSIZE 10
+#define DINTSIZE (sizeof(Object)+sizeof(char)+sizeof(char))
+#define PAIRSIZE (sizeof(Object)+sizeof(Object)+sizeof(char)+sizeof(char))
+
+#define LISTSIZE 100000
+
+#define RN 5
+#define STACKSIZE 1000000
+
+#define MB 1000000
+#define MEM 512
+#define HEAPSIZE (sizeof(char)*MEM*MB)
 
 extern Object* gcs[STACKSIZE];
 extern int stackpoint;
@@ -44,13 +51,10 @@ extern Object* local[STACKSIZE];
 extern int local_sp;
 
 extern Object* R[RN];
-extern Object* Heap;
 extern Object* HtopINT;
 extern Object* HbtmINT;
 extern Object* HtopPAIR;
 extern Object* HbtmPAIR;
-extern Object* HPAIR[FREESIZE];
-extern Object* HINT[FREESIZE];
 extern Object* freelistINT;
 extern Object* freelistPAIR;
 

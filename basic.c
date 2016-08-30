@@ -15,17 +15,12 @@ Object* freelistPAIR;
 Object* cons(Object* car, Object* cdr){
   
   // CHECK(car); CHECK(cdr);
-
   if (EMPTY_LIST(freelistPAIR)){
-    puts("\nStart GC");
     gc();
     if(EMPTY_LIST(freelistPAIR)){
-      printf("Error: 2\n");
       exit(0);
     }
   }
-  // Object* obj = allocate();
-  printf("allocate T_PAIR: %p\n", freelistPAIR);  
   Object* obj = freelistPAIR;
   freelistPAIR = cdr(obj);
   car(obj) = car;
@@ -37,13 +32,11 @@ Object* cons(Object* car, Object* cdr){
 
 Object* atom(int i){
   if (EMPTY_LIST(freelistINT)){
-    puts("\n Start GC");
+    gc();
     if(EMPTY_LIST(freelistINT)){
       exit(0);
     }
   }  
-  // Object* obj = allocate();
-  printf("allocate T_INT: %p\n", freelistINT);  
   Object* obj = freelistINT;
   freelistINT = _DLINK(obj);
   _DINT(obj) = i;
