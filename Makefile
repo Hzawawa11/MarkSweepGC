@@ -1,25 +1,27 @@
-SRCS=	$(wildcard *.c)
+SRCSDIR=	./src/
+SRCS=	$(wildcard $(SRCSDIR)*.c) $(wildcard $(SRCSDIR)*.h)
 OBJS=	$(SRCS:.c=.o)
+BINDIR=	./bin/
 TARGET=	minGC
-CC= gcc
-CFLAGS=	-O3 -Wall
+CC=	gcc
+CFLAGS=	-O3 
 
 all:$(TARGET)
 
 $(TARGET):$(OBJS)
-	$(CC) -o $(TARGET) $(OBJS) $(LDFLAGS) $(CFLAGS)
+	$(CC) -o $(BINDIR)$(TARGET) $(wildcard $(BINDIR)*.o) $(LDFLAGS) $(CFLAGS)
 
 .c.o:
-	$(CC) -c -w $<
+	$(CC) -c -w $< -o $(BINDIR)$(notdir $*).o
 
 debug:
-	$(CC) -o $(TARGET)  -g $(SRCS) $(LDFLAGS) -O0
+	$(CC) -o $(BINDIR)$(TARGET)  -g $(SRCS) $(LDFLAGS) -O0
 
 drun:
-	lldb -f $(TARGET)
+	lldb $(BINDIR)$(TARGET)
 
 run:
-	./$(TARGET)
+	$(BINDIR)$(TARGET)
 
 clean:
-	rm -rf $(OBJS) $(TARGET) *.o *.d *.dSYM
+	rm -rf $(wildcard $(BINDIR)*.o) $(BINDIR)$(TARGET) $(BINDIR)*.o *.d *.dSYM

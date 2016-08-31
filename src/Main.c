@@ -5,22 +5,21 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include "structure.h"
-#include "basic.h"
-#include "list.h"
-#define MARK
+#include "/Users/hiro/Program/C/GC/MarkSweep/include/structure.h"
+#include "/Users/hiro/Program/C/GC/MarkSweep/include/mark.h"
+#include "/Users/hiro/Program/C/GC/MarkSweep/include/list.h"
 
 Object* R[RN];
 
+int counter_pair = 0;
+int counter_dint = 0;
+
 int main(void){
   init_free();
-  // state_list();
 
-  // benchmark();
-  puts("\n\n");
+  benchmark();
   // benchmark2();
-  puts("\n\n");
-  benchmark3();
+  // benchmark3();
 
   /*Int Data*/
   // Object* int_50 = atom(50);

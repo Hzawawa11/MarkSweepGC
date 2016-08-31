@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "structure.h"
-#include "basic.h"
+#include "/Users/hiro/Program/C/GC/MarkSweep/include/structure.h"
+#include "/Users/hiro/Program/C/GC/MarkSweep/include/mark.h"
 
 void state_Obj(Object* obj)
 {
